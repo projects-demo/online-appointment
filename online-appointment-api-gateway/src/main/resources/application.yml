@@ -18,7 +18,7 @@ spring:
           filters:
             - StripPrefix=2
         - id: patient-service
-          uri: http://patient-service.patient-service.svc.cluster.local:8080
+          uri: http://patient-service:8080
           predicates:
             - Path=/api/customer/**
           filters:
