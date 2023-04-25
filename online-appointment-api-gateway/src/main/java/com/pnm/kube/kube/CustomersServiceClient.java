@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 public class CustomersServiceClient {
 
 	private final WebClient.Builder webClientBuilder;
-	private String hostname = "http://patient-service.patient-service.svc.cluster.local";
+	private String hostname = "http://patient-service";
 	private String portName = "8080";
 
 	public Mono<OwnerDetails> getOwner(final int ownerId) {
