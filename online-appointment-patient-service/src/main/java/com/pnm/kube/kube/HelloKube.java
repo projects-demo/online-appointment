@@ -1,11 +1,27 @@
 package com.pnm.kube.kube;
 
+import java.io.StringReader;
+import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
+
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
+import org.xml.sax.InputSource;
 
 @RestController
 public class HelloKube {
@@ -33,7 +49,7 @@ public class HelloKube {
 				System.out.println("2 Exception " + e2.getMessage());
 			}
 		}
-		System.out.println("5 Exception " );
+		System.out.println("5 Exception ");
 
 		return message;
 	}
@@ -50,12 +66,10 @@ public class HelloKube {
 		return "2dear.....";
 	}
 
-	
 	@Bean
 	public RestTemplate rest() {
 		return new RestTemplate();
 	}
-
 
 	@RequestMapping("/welcome-visits")
 	public String welcomeVisits() {
@@ -71,18 +85,57 @@ public class HelloKube {
 
 				System.out.println("11 Exception " + e.getMessage());
 
-				message = restTemplate.getForObject("http://localhost:9999/hellovisit", String.class) + "localhost response";
+				message = restTemplate.getForObject("http://localhost:9999/hellovisit", String.class)
+						+ "localhost response";
 				System.out.println("32 Exception " + e.getMessage());
 
 			} catch (Exception e2) {
 				System.out.println("22 Exception " + e2.getMessage());
 			}
 		}
-		System.out.println("55 Exception " );
+		System.out.println("55 Exception ");
 
 		return message;
 	}
 
+	@CrossOrigin
+	@PostMapping(path = "/esp-mock", produces = "application/xml")
+	public ResponseEntity<ModifyExecutableOrderResponse> get(@RequestBody String requestPayload,
+			@RequestHeader Map<String, String> requestHeaders) {
 
+		XPathFactory xpathFactory = XPathFactory.newInstance();
+		XPath xpath = xpathFactory.newXPath();
+
+		InputSource source = new InputSource(new StringReader(requestPayload));
+
+		String msg = "";
+		String msg1 = "";
+
+		msg1 = StringUtils.substringBetween(requestPayload, "<header:MsgReference>", "</header:MsgReference>");
+
+		try {
+			// msg = (String) xpath.evaluate("//MsgBody", source,XPathConstants.STRING);
+			// msg1 = (String) xpath.evaluate("/resp/msg", source,XPathConstants.STRING);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		System.out.println("Message=" + msg);
+		System.out.println("Message=" + msg1);
+
+		ModifyExecutableOrderResponse model = new ModifyExecutableOrderResponse();
+		SuccessResponse response = new SuccessResponse();
+		response.setMessageReference(msg1);
+		response.setReturnCode("200");
+		response.setServiceName("ModifyExecutableOrderRequest");
+		model.setSuccessResponse(response);
+
+		HttpHeaders headers = new HttpHeaders();
+		ResponseEntity<ModifyExecutableOrderResponse> entityModel = new ResponseEntity<>(model, headers,
+				HttpStatus.CREATED);
+
+		return entityModel;
+	}
 
 }
