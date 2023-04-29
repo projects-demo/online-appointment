@@ -5,6 +5,7 @@
 
 
 
+
 <groupId>com.pnm.kube</groupId>
 	<artifactId>online-appointment-api-gateway</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
